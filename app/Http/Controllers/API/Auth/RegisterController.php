@@ -23,7 +23,6 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
-            'phone' => 'required|unique:users,phone' //Add Custom Phone Validator
         ];
 
         $messages = [
@@ -41,22 +40,13 @@ class RegisterController extends Controller
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => $data['password'],
-            'type' => $data['type'],
-            'phone' => $data['phone']
+            'password' => bcrypt($data['password']),
         ]);
-
-        if ($user->type == 'partner') {
-            PartnerAccount::create([
-                'partner_id' => $user->id,
-                'balance' => 0
-            ]);
-        }
 
         return $user;
     }
 
-    public function register(Request $request, MediaUploader $mediaUploader)
+    public function register(Request $request)
     {
         $validator = $this->validator($request->all(), $request->type);
 
@@ -67,28 +57,7 @@ class RegisterController extends Controller
            ]);
        }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'type' => $request->type,
-            'password' => $request->password
-        ]);
-
-        if ($user->type == 'partner') {
-            PartnerAccount::create([
-                'partner_id' => $user->id,
-                'balance' => 0
-            ]);
-
-           Subscription::create([
-                'subscriber_id' => $user->id
-            ]);
-        }
-
-//        $user = $this->create($user_data);
-
-        event(new AppUserRegistered($user));
+        $user = $this->create($request->all());
 
         return response()->json([
             'success' => true,
