@@ -15,6 +15,7 @@ class CreateTimeEntriesTable extends Migration
     {
         Schema::create('time_entries', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id');
             $table->string('task_name');
             $table->dateTime('start_date_time');
             $table->dateTime('end_date_time');

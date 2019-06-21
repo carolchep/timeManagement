@@ -25,7 +25,10 @@ class TimeEntriesController extends Controller
         ]);
 
         return response()->json([
-            'data' => fractal(TimeEntry::create($request->all()), new TimeEntryTransformer())
+            'data' => fractal(
+                $request->user()->timeEntries()->create($request->all()),
+                new TimeEntryTransformer()
+            )
         ]);
     }
 
@@ -42,6 +45,21 @@ class TimeEntriesController extends Controller
         $entry->end_date_time = $request->end_date_time;
         $entry->save();
 
+        return response()->json([
+            'data' => fractal($entry, new TimeEntryTransformer())
+        ]);
+    }
+
+    public function delete(TimeEntry $entry)
+    {
+        $entry->delete();
+        return response()->json([
+            'message' => 'entry deleted'
+        ]);
+    }
+
+    public function show(TimeEntry $entry)
+    {
         return response()->json([
             'data' => fractal($entry, new TimeEntryTransformer())
         ]);

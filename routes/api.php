@@ -18,6 +18,7 @@ Route::group(['middleware' => 'auth:api'], function(){
     Route::post('entries', 'API\TimeEntriesController@store');
     Route::post('entries/{entry}', 'API\TimeEntriesController@update');
     Route::delete('entries/{entry}', 'API\TimeEntriesController@delete');
+    Route::get('entries/{entry}', 'API\TimeEntriesController@show');
 });
 Route::post('/login', 'API\Auth\LoginController@login');
 Route::post('oauth/token', 'API\Auth\AccessTokenController@issueToken');
